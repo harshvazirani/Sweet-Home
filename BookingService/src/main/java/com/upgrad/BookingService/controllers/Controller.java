@@ -45,4 +45,10 @@ public class Controller {
         }
 
     }
+
+    @GetMapping(value = "/booking/demo")
+    public ResponseEntity demoMethod(){
+        return new ResponseEntity("Hello", HttpStatus.OK);
+    }
+
 }

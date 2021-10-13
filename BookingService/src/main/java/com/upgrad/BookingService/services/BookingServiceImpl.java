@@ -6,10 +6,14 @@ import com.upgrad.BookingService.dto.PaymentDTO;
 import com.upgrad.BookingService.entities.BookingInfoEntity;
 import com.upgrad.BookingService.exceptions.BookingIdNotPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -17,6 +21,12 @@ import java.util.Random;
 public class BookingServiceImpl implements BookingService{
     @Autowired
     private BookingInfoDao bookingInfoDao;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${paymentService.url}")
+    private String paymentServiceUrl;
 
     public static String getRandomNumbers(int count){
         Random rand = new Random();
@@ -59,6 +69,18 @@ public class BookingServiceImpl implements BookingService{
         if(b.isEmpty()) throw new BookingIdNotPresentException("Invalid Booking Id");
 
         BookingInfoEntity bookingInfoEntity = b.get();
+
+        Map<String, String> paymentUriMap = new HashMap<>();
+        paymentUriMap.put("paymentMode", paymentDTO.getPaymentMode());
+        paymentUriMap.put("bookingId", String.valueOf(paymentDTO.getBookingId()));
+        paymentUriMap.put("upiId", paymentDTO.getUpiId());
+        paymentUriMap.put("cardNumber", paymentDTO.getCardNumber());
+        Integer transactionId = restTemplate.getForObject(paymentServiceUrl, Integer.class, paymentUriMap);
+        if(transactionId==null){
+            return null;
+        }
+
+        bookingInfoEntity.setTransactionId(transactionId);
         return bookingInfoEntity;
     }
 }

@@ -4,6 +4,7 @@ import com.upgrad.PaymentService.dao.TransactionDetailsDao;
 import com.upgrad.PaymentService.dto.PaymentDTO;
 import com.upgrad.PaymentService.dto.TransactionDTO;
 import com.upgrad.PaymentService.entities.TransactionDetailsEntity;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceImpl implements PaymentService{
     @Autowired
     private TransactionDetailsDao transactionDetailsDao;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @Override
     public int acceptPaymentDetails(PaymentDTO paymentDTO) {
@@ -26,12 +30,6 @@ public class PaymentServiceImpl implements PaymentService{
     @Override
     public TransactionDTO getTransactionDetails(int transactionId) {
         TransactionDetailsEntity t = transactionDetailsDao.getById(transactionId);
-        TransactionDTO transactionDTO = new TransactionDTO();
-        transactionDTO.setTransactionId(t.getTransactionId());
-        transactionDTO.setBookingId(t.getBookingId());
-        transactionDTO.setPaymentMode(t.getPaymentMode());
-        transactionDTO.setCardNumber(t.getCardNumber());
-        transactionDTO.setUpiId(t.getUpiId());
-        return transactionDTO;
+        return modelMapper.map(t, TransactionDTO.class);
     }
 }
