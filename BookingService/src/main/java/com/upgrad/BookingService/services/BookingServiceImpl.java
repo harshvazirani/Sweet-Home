@@ -4,20 +4,19 @@ import com.upgrad.BookingService.dao.BookingInfoDao;
 import com.upgrad.BookingService.dto.BookingDTO;
 import com.upgrad.BookingService.dto.PaymentDTO;
 import com.upgrad.BookingService.entities.BookingInfoEntity;
+import com.upgrad.BookingService.exceptions.BookingIdNotPresentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
 public class BookingServiceImpl implements BookingService{
     @Autowired
     private BookingInfoDao bookingInfoDao;
-
-    private final int roomRate = 1000;
 
     public static String getRandomNumbers(int count){
         Random rand = new Random();
@@ -38,6 +37,7 @@ public class BookingServiceImpl implements BookingService{
     public BookingInfoEntity acceptBookingDetails(BookingDTO bookingDTO) {
         String roomNumbers = getRandomNumbers(bookingDTO.getNumOfRooms());
         int numDays = (int) Duration.between(bookingDTO.getFromDate(), bookingDTO.getToDate()).toDays();
+        int roomRate = 1000;
         int roomPrice = roomRate * bookingDTO.getNumOfRooms() * numDays;
         LocalDateTime bookedOn = LocalDateTime.now();
 
@@ -54,7 +54,11 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
-    public BookingInfoEntity acceptPaymentDetails(PaymentDTO paymentDTO) {
-        return null;
+    public BookingInfoEntity acceptPaymentDetails(PaymentDTO paymentDTO) throws BookingIdNotPresentException {
+        Optional<BookingInfoEntity> b = bookingInfoDao.findById(paymentDTO.getBookingId());
+        if(b.isEmpty()) throw new BookingIdNotPresentException("Invalid Booking Id");
+
+        BookingInfoEntity bookingInfoEntity = b.get();
+        return bookingInfoEntity;
     }
 }

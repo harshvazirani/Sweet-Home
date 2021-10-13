@@ -7,7 +7,7 @@ public class PaymentDTO {
 
     private String cardNumber;
 
-    private int transactionId ;
+    private String paymentMode;
 
     public int getBookingId() {
         return bookingId;
@@ -33,11 +33,11 @@ public class PaymentDTO {
         this.cardNumber = cardNumber;
     }
 
-    public int getTransactionId() {
-        return transactionId;
+    public String getPaymentMode() {
+        return paymentMode;
     }
 
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
     }
 }
