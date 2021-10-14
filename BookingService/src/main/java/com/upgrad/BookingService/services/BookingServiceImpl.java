@@ -85,6 +85,7 @@ public class BookingServiceImpl implements BookingService{
         }
 
         bookingInfoEntity.setTransactionId(transactionId);
+        bookingInfoEntity = bookingInfoDao.save(bookingInfoEntity);
         String message = "Booking confirmed for user with aadhaar number: "
                 + bookingInfoEntity.getAadharNumber()
                 +    "    |    "
