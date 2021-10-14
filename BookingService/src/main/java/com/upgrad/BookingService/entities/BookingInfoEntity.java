@@ -1,6 +1,7 @@
 package com.upgrad.BookingService.entities;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,12 +13,12 @@ public class BookingInfoEntity {
     private int bookingId ;
 
     @Column(nullable = true)
-    private LocalDateTime fromDate;
+    private LocalDate fromDate;
 
     @Column(nullable = true)
-    private LocalDateTime toDate;
+    private LocalDate toDate;
 
-    @Column(nullable = true, unique = true)
+    @Column(nullable = true)
     private String aadharNumber ;
 
     private int numOfRooms ;
@@ -27,7 +28,7 @@ public class BookingInfoEntity {
     @Column(nullable = false)
     private int roomPrice ;
 
-    @Column(columnDefinition = "default 0")
+    @Column(columnDefinition = "int default 0")
     private int transactionId ;
 
     @Column(nullable = true)
@@ -39,22 +40,6 @@ public class BookingInfoEntity {
 
     public void setBookingId(int bookingId) {
         this.bookingId = bookingId;
-    }
-
-    public LocalDateTime getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(LocalDateTime fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public LocalDateTime getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(LocalDateTime toDate) {
-        this.toDate = toDate;
     }
 
     public String getAadharNumber() {
@@ -97,26 +82,27 @@ public class BookingInfoEntity {
         this.transactionId = transactionId;
     }
 
+    public LocalDate getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(LocalDate fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public LocalDate getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(LocalDate toDate) {
+        this.toDate = toDate;
+    }
+
     public LocalDateTime getBookedOn() {
         return bookedOn;
     }
 
     public void setBookedOn(LocalDateTime bookedOn) {
         this.bookedOn = bookedOn;
-    }
-
-    @Override
-    public String toString() {
-        return "BookingInfoEntity{" +
-                "bookingId=" + bookingId +
-                ", fromDate=" + fromDate +
-                ", toDate=" + toDate +
-                ", aadharNumber='" + aadharNumber + '\'' +
-                ", numOfRooms=" + numOfRooms +
-                ", roomNumbers='" + roomNumbers + '\'' +
-                ", roomPrice=" + roomPrice +
-                ", transactionId=" + transactionId +
-                ", bookedOn=" + bookedOn +
-                '}';
     }
 }

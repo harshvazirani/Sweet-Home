@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -42,11 +44,18 @@ public class BookingServiceImpl implements BookingService{
         return stringBuilder.toString();
     }
 
+    public static LocalDate stringToLocalDate(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(date, formatter);
+    }
+
 
     @Override
     public BookingInfoEntity acceptBookingDetails(BookingDTO bookingDTO) {
         String roomNumbers = getRandomNumbers(bookingDTO.getNumOfRooms());
-        int numDays = (int) Duration.between(bookingDTO.getFromDate(), bookingDTO.getToDate()).toDays();
+        LocalDate fromDate = stringToLocalDate(bookingDTO.getFromDate());
+        LocalDate toDate = stringToLocalDate(bookingDTO.getToDate());
+        int numDays = (int) Duration.between(fromDate.atStartOfDay(), toDate.atStartOfDay()).toDays();
         int roomRate = 1000;
         int roomPrice = roomRate * bookingDTO.getNumOfRooms() * numDays;
         LocalDateTime bookedOn = LocalDateTime.now();
@@ -54,8 +63,8 @@ public class BookingServiceImpl implements BookingService{
         BookingInfoEntity bookingInfo = new BookingInfoEntity();
         bookingInfo.setBookedOn(bookedOn);
         bookingInfo.setAadharNumber(bookingDTO.getAadharNumber());
-        bookingInfo.setFromDate(bookingDTO.getFromDate());
-        bookingInfo.setToDate(bookingDTO.getToDate());
+        bookingInfo.setFromDate(fromDate);
+        bookingInfo.setToDate(toDate);
         bookingInfo.setNumOfRooms(bookingDTO.getNumOfRooms());
         bookingInfo.setRoomNumbers(roomNumbers);
         bookingInfo.setRoomPrice(roomPrice);
@@ -75,7 +84,7 @@ public class BookingServiceImpl implements BookingService{
         paymentUriMap.put("bookingId", String.valueOf(paymentDTO.getBookingId()));
         paymentUriMap.put("upiId", paymentDTO.getUpiId());
         paymentUriMap.put("cardNumber", paymentDTO.getCardNumber());
-        Integer transactionId = restTemplate.getForObject(paymentServiceUrl, Integer.class, paymentUriMap);
+        Integer transactionId = restTemplate.postForObject(paymentServiceUrl, paymentDTO, Integer.class);
         if(transactionId==null){
             return null;
         }

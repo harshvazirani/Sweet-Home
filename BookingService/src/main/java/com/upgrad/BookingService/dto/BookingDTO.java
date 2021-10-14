@@ -3,27 +3,27 @@ package com.upgrad.BookingService.dto;
 import java.time.LocalDateTime;
 
 public class BookingDTO {
-    private LocalDateTime fromDate;
+    private String fromDate;
 
-    private LocalDateTime toDate;
+    private String toDate;
 
     private String aadharNumber;
 
     private int numOfRooms;
 
-    public LocalDateTime getFromDate() {
+    public String getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(LocalDateTime fromDate) {
+    public void setFromDate(String fromDate) {
         this.fromDate = fromDate;
     }
 
-    public LocalDateTime getToDate() {
+    public String getToDate() {
         return toDate;
     }
 
-    public void setToDate(LocalDateTime toDate) {
+    public void setToDate(String toDate) {
         this.toDate = toDate;
     }
 
