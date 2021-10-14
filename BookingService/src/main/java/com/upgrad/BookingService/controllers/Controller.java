@@ -34,7 +34,7 @@ public class Controller {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity bookingConfirmation(@RequestBody PaymentDTO paymentDTO, @PathVariable(name = "id") int id) {
         String paymentMode = paymentDTO.getPaymentMode();
-        if (paymentMode.equals("CASH") || paymentMode.equals("UPI")) {
+        if (paymentMode.equals("CARD") || paymentMode.equals("UPI")) {
             try {
                 BookingInfoEntity b = bookingService.acceptPaymentDetails(paymentDTO);
                 return new ResponseEntity(b, HttpStatus.CREATED);
