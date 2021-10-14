@@ -33,6 +33,8 @@ public class Controller {
     @PostMapping(value = "/booking/{id}/transaction", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity bookingConfirmation(@RequestBody PaymentDTO paymentDTO, @PathVariable(name = "id") int id) {
+        if(paymentDTO.getBookingId()!=id)
+            return new ResponseEntity("Booking Id in URI and Request Body don't match", HttpStatus.BAD_REQUEST);
         String paymentMode = paymentDTO.getPaymentMode();
         if (paymentMode.equals("CARD") || paymentMode.equals("UPI")) {
             try {

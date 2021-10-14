@@ -1,8 +1,7 @@
 package com.upgrad.BookingService.entities;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name="booking")
@@ -10,13 +9,14 @@ public class BookingInfoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int bookingId ;
+    @Column(name = "bookingId")
+    private int id;
 
     @Column(nullable = true)
-    private LocalDate fromDate;
+    private ZonedDateTime fromDate;
 
     @Column(nullable = true)
-    private LocalDate toDate;
+    private ZonedDateTime toDate;
 
     @Column(nullable = true)
     private String aadharNumber ;
@@ -32,14 +32,14 @@ public class BookingInfoEntity {
     private int transactionId ;
 
     @Column(nullable = true)
-    private LocalDateTime bookedOn;
+    private ZonedDateTime bookedOn;
 
-    public int getBookingId() {
-        return bookingId;
+    public int getId() {
+        return id;
     }
 
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getAadharNumber() {
@@ -82,34 +82,34 @@ public class BookingInfoEntity {
         this.transactionId = transactionId;
     }
 
-    public LocalDate getFromDate() {
+    public ZonedDateTime getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(LocalDate fromDate) {
+    public void setFromDate(ZonedDateTime fromDate) {
         this.fromDate = fromDate;
     }
 
-    public LocalDate getToDate() {
+    public ZonedDateTime getToDate() {
         return toDate;
     }
 
-    public void setToDate(LocalDate toDate) {
+    public void setToDate(ZonedDateTime toDate) {
         this.toDate = toDate;
     }
 
-    public LocalDateTime getBookedOn() {
+    public ZonedDateTime getBookedOn() {
         return bookedOn;
     }
 
-    public void setBookedOn(LocalDateTime bookedOn) {
+    public void setBookedOn(ZonedDateTime bookedOn) {
         this.bookedOn = bookedOn;
     }
 
     @Override
     public String toString() {
         return "BookingInfoEntity{" +
-                "bookingId=" + bookingId +
+                "id=" + id +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
                 ", aadharNumber='" + aadharNumber + '\'' +

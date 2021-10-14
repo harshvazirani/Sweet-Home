@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
@@ -59,13 +57,13 @@ public class BookingServiceImpl implements BookingService{
         int numDays = (int) Duration.between(fromDate.atStartOfDay(), toDate.atStartOfDay()).toDays();
         int roomRate = 1000;
         int roomPrice = roomRate * bookingDTO.getNumOfRooms() * numDays;
-        LocalDateTime bookedOn = LocalDateTime.now();
+        ZonedDateTime bookedOn = ZonedDateTime.now();
 
         BookingInfoEntity bookingInfo = new BookingInfoEntity();
         bookingInfo.setBookedOn(bookedOn);
         bookingInfo.setAadharNumber(bookingDTO.getAadharNumber());
-        bookingInfo.setFromDate(fromDate);
-        bookingInfo.setToDate(toDate);
+        bookingInfo.setFromDate(fromDate.atStartOfDay().atZone(ZoneId.of("Asia/Kolkata")));
+        bookingInfo.setToDate(toDate.atStartOfDay().atZone(ZoneId.of("Asia/Kolkata")));
         bookingInfo.setNumOfRooms(bookingDTO.getNumOfRooms());
         bookingInfo.setRoomNumbers(roomNumbers);
         bookingInfo.setRoomPrice(roomPrice);
