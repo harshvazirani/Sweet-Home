@@ -2,7 +2,6 @@ package com.upgrad.PaymentService.controllers;
 
 import com.upgrad.PaymentService.dto.PaymentDTO;
 import com.upgrad.PaymentService.dto.TransactionDTO;
-import com.upgrad.PaymentService.entities.TransactionDetailsEntity;
 import com.upgrad.PaymentService.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

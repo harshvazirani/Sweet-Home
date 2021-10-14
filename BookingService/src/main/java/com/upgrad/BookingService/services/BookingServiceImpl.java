@@ -14,8 +14,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -30,11 +28,12 @@ public class BookingServiceImpl implements BookingService{
     @Value("${paymentService.url}")
     private String paymentServiceUrl;
 
+    //Utility Method to get room numbers based on count
     public static String getRandomNumbers(int count){
         Random rand = new Random();
         int upperBound = 100;
         StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append(String.valueOf(rand.nextInt(upperBound)));
+        stringBuilder.append(rand.nextInt(upperBound));
 
         for (int i=1; i<count; i++){
             stringBuilder.append(',');
@@ -44,12 +43,14 @@ public class BookingServiceImpl implements BookingService{
         return stringBuilder.toString();
     }
 
+    //Utility method to convert String to LocalDate
     public static LocalDate stringToLocalDate(String date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return LocalDate.parse(date, formatter);
     }
 
 
+    //Accepts Booking request. Calculates total Room Price, gets room numbers, and sets bookedOn
     @Override
     public BookingInfoEntity acceptBookingDetails(BookingDTO bookingDTO) {
         String roomNumbers = getRandomNumbers(bookingDTO.getNumOfRooms());
@@ -72,6 +73,7 @@ public class BookingServiceImpl implements BookingService{
         return  bookingInfoDao.save(bookingInfo);
     }
 
+    //If relevant bookingId is found, calls Payment Service Endpoint 1 and prints confirmation message
     @Override
     public BookingInfoEntity acceptPaymentDetails(PaymentDTO paymentDTO) throws BookingIdNotPresentException {
         Optional<BookingInfoEntity> b = bookingInfoDao.findById(paymentDTO.getBookingId());
@@ -79,17 +81,18 @@ public class BookingServiceImpl implements BookingService{
 
         BookingInfoEntity bookingInfoEntity = b.get();
 
-        Map<String, String> paymentUriMap = new HashMap<>();
-        paymentUriMap.put("paymentMode", paymentDTO.getPaymentMode());
-        paymentUriMap.put("bookingId", String.valueOf(paymentDTO.getBookingId()));
-        paymentUriMap.put("upiId", paymentDTO.getUpiId());
-        paymentUriMap.put("cardNumber", paymentDTO.getCardNumber());
         Integer transactionId = restTemplate.postForObject(paymentServiceUrl, paymentDTO, Integer.class);
         if(transactionId==null){
             return null;
         }
 
         bookingInfoEntity.setTransactionId(transactionId);
+        String message = "Booking confirmed for user with aadhaar number: "
+                + bookingInfoEntity.getAadharNumber()
+                +    "    |    "
+                + "Here are the booking details:    " + bookingInfoEntity;
+
+        System.out.println(message);
         return bookingInfoEntity;
     }
 }

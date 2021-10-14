@@ -12,43 +12,46 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//The only controller for the Booking Microservice
 @RestController
 @RequestMapping(value = "/hotel")
 public class Controller {
 
+    //Injecting the Service Class Object
     @Autowired
     private BookingService bookingService;
 
-    @PostMapping(value = "/booking" , consumes = MediaType.APPLICATION_JSON_VALUE,
+    //EndPoint 1 of the Booking Service
+    @PostMapping(value = "/booking", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity bookingDetails(@RequestBody BookingDTO bookingDTO){
+    public ResponseEntity bookingDetails(@RequestBody BookingDTO bookingDTO) {
         BookingInfoEntity b = bookingService.acceptBookingDetails(bookingDTO);
         return new ResponseEntity(b, HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/booking/{id}/transaction" , consumes = MediaType.APPLICATION_JSON_VALUE,
+    //Endpoint 2 of the Booking Service
+    @PostMapping(value = "/booking/{id}/transaction", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity bookingConfirmation(@RequestBody PaymentDTO paymentDTO, @PathVariable(name="id") int id){
+    public ResponseEntity bookingConfirmation(@RequestBody PaymentDTO paymentDTO, @PathVariable(name = "id") int id) {
         String paymentMode = paymentDTO.getPaymentMode();
-        if(paymentMode.equals("CASH") || paymentMode.equals("UPI")) {
-            try{
-            BookingInfoEntity b = bookingService.acceptPaymentDetails(paymentDTO);
-            return new ResponseEntity(b, HttpStatus.CREATED);}
-            catch(BookingIdNotPresentException e){
+        if (paymentMode.equals("CASH") || paymentMode.equals("UPI")) {
+            try {
+                BookingInfoEntity b = bookingService.acceptPaymentDetails(paymentDTO);
+                return new ResponseEntity(b, HttpStatus.CREATED);
+            }
+
+            catch (BookingIdNotPresentException e) {
+                //Exception 1 : "Invalid Booking Id"
                 ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), 400);
                 return new ResponseEntity(exceptionDTO, HttpStatus.BAD_REQUEST);
             }
         }
-        else{
+
+        else {
+            //Exception 2 : "Invalid mode of payment"
             ExceptionDTO exceptionDTO = new ExceptionDTO("Invalid mode of payment", 400);
             return new ResponseEntity(exceptionDTO, HttpStatus.BAD_REQUEST);
         }
 
     }
-
-    @GetMapping(value = "/booking/demo")
-    public ResponseEntity demoMethod(){
-        return new ResponseEntity("Hello", HttpStatus.OK);
-    }
-
 }
